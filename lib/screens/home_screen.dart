@@ -86,7 +86,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 final expense = _expenses[index];
                 return ListTile(
                   title: Text(expense.item),
-                  subtitle: Text('${expense.date.toLocal()}'),
+                  subtitle: Text(
+                    '${DateTime.parse(expense.date).toLocal()}',
+                  ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

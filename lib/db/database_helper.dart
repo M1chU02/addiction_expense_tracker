@@ -1,3 +1,4 @@
+import 'package:addiction_expense_tracker/models/template_item.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/expense.dart';
@@ -75,5 +76,43 @@ class DatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  // Create template items table
+  Future<void> _onCreate(Database db, int version) async {
+    await db.execute('''
+      CREATE TABLE expenses(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        item TEXT,
+        price REAL,
+        quantity INTEGER,
+        date TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE template_items(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        price REAL
+      )
+    ''');
+  }
+
+  // Template items methods
+  Future<int> insertTemplateItem(TemplateItem item) async {
+    Database db = await instance.database;
+    return await db.insert('template_items', item.toMap());
+  }
+
+  Future<List<TemplateItem>> getTemplateItems() async {
+    Database db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db.query('template_items');
+    return List.generate(maps.length, (i) => TemplateItem.fromMap(maps[i]));
+  }
+
+  Future<void> deleteTemplateItem(int id) async {
+    Database db = await instance.database;
+    await db.delete('template_items', where: 'id = ?', whereArgs: [id]);
   }
 }
